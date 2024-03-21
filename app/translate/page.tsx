@@ -1,4 +1,5 @@
 import TranslationForm from "@/components/TranslationForm";
+import { getTranslations } from "@/mongodb/models/User";
 import { auth } from "@clerk/nextjs/server";
 
 export type TranslationLanguages = {
@@ -13,6 +14,9 @@ export type TranslationLanguages = {
 
 async function TranslatePage() {
   auth().protect();
+
+  const { userId } = auth();
+  if (!userId) throw new Error("User not logged in");
 
   const response = await fetch(
     "https://api.cognitive.microsofttranslator.com/languages?api-version=3.0",
