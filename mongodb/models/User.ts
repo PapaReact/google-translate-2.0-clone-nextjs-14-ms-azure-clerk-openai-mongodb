@@ -43,6 +43,7 @@ export async function addOrUpdateUser(
     $set: { userId: userId },
     $push: { translations: translation },
   };
+
   await connectDB();
 
   // Upsert option ensures that the document is created if it doesn't exist

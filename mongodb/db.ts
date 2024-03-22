@@ -9,13 +9,13 @@ if (!connectionString) {
 
 const connectDB = async () => {
   if (mongoose.connection.readyState >= 1) {
-    console.log("Already connected to MongoDB");
+    console.log("---- Already connected to MongoDB ----");
     return;
   }
 
   try {
     await mongoose.connect(connectionString);
-    console.log("Connected to MongoDB");
+    console.log("---- Connected to MongoDB ----");
   } catch (err) {
     console.error("Could not connect to MongoDB:", err);
     // Exit process with failure
