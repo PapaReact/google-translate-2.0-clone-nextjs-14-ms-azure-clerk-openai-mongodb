@@ -6,7 +6,7 @@ import { addOrUpdateUser } from "@/mongodb/models/User";
 import axios from "axios";
 import { v4 } from "uuid";
 import { auth } from "@clerk/nextjs/server";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 const key = process.env.AZURE_TEXT_TRANSLATION_KEY;
 const endpoint = process.env.AZURE_TEXT_TRANSLATION;
@@ -51,7 +51,6 @@ async function translate(prevState: State, formData: FormData) {
   });
 
   const data = response.data;
-  console.log(data);
 
   if (data.error) {
     console.log(`Error ${data.error.code}: ${data.error.message}`);
@@ -77,7 +76,8 @@ async function translate(prevState: State, formData: FormData) {
     console.error(err);
   }
 
-  //   revalidatePath("/translate");
+  revalidateTag("translationHistory");
+
   return {
     ...prevState,
     output: data[0].translations[0].text,

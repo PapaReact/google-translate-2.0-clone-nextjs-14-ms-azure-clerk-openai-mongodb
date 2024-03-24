@@ -69,6 +69,30 @@ export async function addOrUpdateUser(
   }
 }
 
+export async function removeTranslation(
+  userId: string,
+  translationId: string
+): Promise<IUser> {
+  await connectDB();
+
+  try {
+    const user: IUser | null = await User.findOneAndUpdate(
+      { userId: userId }, // Find the user with the given userId
+      { $pull: { translations: { _id: translationId } } }, // Remove the translation with the given _id
+      { new: true } // Return the updated document
+    );
+    if (!user) {
+      throw new Error("User not found.");
+    }
+    console.log("Translation removed:", user);
+
+    return user;
+  } catch (err) {
+    console.error("Error removing translation:", err);
+    throw err;
+  }
+}
+
 export async function getTranslations(
   userId: string
 ): Promise<Array<ITranslation>> {
@@ -77,7 +101,13 @@ export async function getTranslations(
   try {
     const user: IUser | null = await User.findOne({ userId: userId });
     if (user) {
-      return user.translations;
+      // sort translations by timestamp in descending order
+      user.translations.sort(
+        (a: ITranslation, b: ITranslation) =>
+          b.timestamp.getTime() - a.timestamp.getTime()
+      );
+
+      return user.translations; // Return the translations
     } else {
       console.log(`User with userId ${userId} not found.`);
       return [];
